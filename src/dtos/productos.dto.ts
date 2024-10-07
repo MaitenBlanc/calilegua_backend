@@ -1,10 +1,10 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, IsNumber, IsUrl, IsPositive } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 export class CreateProductDTO {
     @IsString()
     @IsNotEmpty()
-    readonly nombre: string; //solo lectura
+    readonly nombre: string;
 
     @IsString()
     @IsNotEmpty()
@@ -29,5 +29,15 @@ export class CreateProductDTO {
     readonly imagen: string;
 }
 
-export class UpdateProductDTO extends PartialType
-    (OmitType(CreateProductDTO, ['nombre']),) { }
+export class UpdateProductDTO extends PartialType(
+    OmitType(CreateProductDTO, ['nombre']),
+) { }
+
+// Eliminar producto
+export class RemoveProductDTO {
+    @IsNumber()
+    @IsNotEmpty()
+    readonly id: number;
+}
+
+

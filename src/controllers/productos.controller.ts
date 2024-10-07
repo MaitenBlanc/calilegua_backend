@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { CreateProductDTO } from 'src/dtos/productos.dto';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { CreateProductDTO, RemoveProductDTO, UpdateProductDTO } from 'src/dtos/productos.dto';
 import { ProductosService } from 'src/services/productos.service';
 
 @Controller('productos')
@@ -9,37 +9,38 @@ export class ProductosController {
 
     // GET
     @Get(':idProduct')
-    getProducto2(@Param('idProduct') idProduct: string): string {
-        return `El identificador del producto es: ${idProduct}`;
+    @HttpCode(HttpStatus.ACCEPTED)
+    getProducto(
+        @Param('idProduct', ParseIntPipe) idProduct: string,) {
+        return this.productsService.findOne(+idProduct);
     }
 
     @Get('listar')
-    findAll() {
+    getProducts(
+        @Query('limit') limit = 100,
+        @Query('offset') offset = 0,
+        @Query('brand') brand = '',
+    ) {
         return this.productsService.findAll();
     }
 
     // POST
     @Post()
     create(@Body() payload: CreateProductDTO) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+        return this.productsService.create(payload);
     }
 
     // PUT
     @Put(':idProduct')
-    updateProducto(@Param('idProduct') idProduct: string, @Body() body: CreateProductDTO): any {
-        return {
-            idProduct: idProduct,
-            nombre: body.nombre,
-            precio: body.precio,
-        };
+    updateProducto(@Param('idProduct') idProduct: string,
+        @Body() payload: UpdateProductDTO) {
+        return this.productsService.update(+idProduct, payload);
     }
 
     // DELETE
     @Delete(':idProduct')
-    deleteProducto(@Param('idProduct') idProduct: string): any {
+    deleteProducto(@Param('idProduct') idProduct: string,
+        @Body() body: RemoveProductDTO) {
         return {
             idProduct: idProduct,
             delete: true,

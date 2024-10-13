@@ -1,23 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FabricantesController } from './controllers/fabricantes.controller';
-import { ProductosController } from './controllers/productos.controller';
-import { CategoriasController } from './controllers/categorias.controller';
-import { CompradoresController } from './controllers/compradores.controller';
-import { OperadoresController } from './controllers/operadores.controller';
-import { PedidosController } from './controllers/pedidos.controller';
-import { ProductosService } from './services/productos.service';
-import { CategoriasService } from './services/categorias.service';
-import { CompradoresService } from './services/compradores.service';
-import { FabricantesService } from './services/fabricantes.service';
-import { OperadoresService } from './services/operadores.service';
-import { PedidosService } from './services/pedidos.service';
+import { DatabaseModule } from './database/database.module';
+import { OperadoresModule } from './operadores/operadores.module';
+import { ProductosModule } from './productos/productos.module';
+import { HttpModule, HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Module({
-  imports: [],
-  controllers: [AppController, FabricantesController, ProductosController, CategoriasController, 
-                CompradoresController, OperadoresController, PedidosController],
-  providers: [AppService, ProductosService, CategoriasService, CompradoresService, FabricantesService, OperadoresService, PedidosService],
+  imports: [HttpModule, DatabaseModule, OperadoresModule, ProductosModule],
+  controllers: [AppController],
+  providers: [AppService,
+    {
+      provide: 'TAREA_ASINC',
+      useFactory: async (http: HttpService) => {
+        const req = http.get('https://jsonplaceholder.typicode.com/posts');
+        const tarea = await lastValueFrom(req);
+        return tarea.data;
+      },
+      inject: [HttpService],
+    }
+  ],
+
 })
 export class AppModule { }

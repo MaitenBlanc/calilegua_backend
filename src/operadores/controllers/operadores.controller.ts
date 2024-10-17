@@ -8,6 +8,11 @@ export class OperadoresController {
     constructor(private operadoresService: OperadoresService) { }
 
     // GET
+    @Get('')
+    getAll() {
+        return this.operadoresService.findAll();
+    }
+
     @Get(':id/pedidos')
     getOrders(@Param('id', ParseIntPipe) id: number) {
         return this.operadoresService.getOrderByUser(id);
@@ -16,29 +21,26 @@ export class OperadoresController {
     // POST
     @Post()
     create(@Body() payload: CreateOperadorDTO) {
+        const operador = this.operadoresService.create(payload);
         return {
-            message: 'Acción de crear',
-            payload,
+            message: 'Operador creado con éxito!',
+            operador,
         };
     }
 
     // PUT
     @Put(':id/pedidos')
     updateOperador(
-        @Param('id') id: string,
+        @Param('id', ParseIntPipe) id: number,
         @Body() body: UpdateOperadorDTO,
     ) {
-        return {
-            id: id,
-            email: body.email,
-            password: body.password,
-            role: body.role,
-        };
+        return this.operadoresService.update(id, body)
     }
 
     // DELETE
     @Delete(':id')
-    deleteOperador(@Param('id') id: string): any {
+    deleteOperador(@Param('id', ParseIntPipe) id: number): any {
+        this.operadoresService.delete(id);
         return {
             id: id,
             delete: true,

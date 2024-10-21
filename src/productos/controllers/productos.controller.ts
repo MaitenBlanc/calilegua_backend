@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProductDTO, RemoveProductDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
 import { ProductosService } from 'src/productos/services/productos.service';
 
+@ApiTags('Productos')
 @Controller('productos')
 export class ProductosController {
 
@@ -10,12 +12,14 @@ export class ProductosController {
     // GET
     @Get(':idProduct')
     @HttpCode(HttpStatus.ACCEPTED)
+    @ApiOperation({ summary: 'Producto: ' })
     getProducto(
         @Param('idProduct', ParseIntPipe) idProduct: string,) {
         return this.productsService.findOne(+idProduct);
     }
 
     @Get('listar')
+    @ApiOperation({ summary: 'Catálogo con todos los productos' })
     getProducts(
         @Query('limit') limit = 100,
         @Query('offset') offset = 0,

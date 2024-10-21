@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { OperadoresService } from '../services/operadores.service';
 import { CreateOperadorDTO, UpdateOperadorDTO } from '../dtos/operadores.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Operadores')
 @Controller('operadores')
 export class OperadoresController {
 

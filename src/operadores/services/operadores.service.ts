@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductosService } from 'src/productos/services/productos.service';
 import { Operador } from '../entities/operador.entity';
 import { Pedido } from '../entities/pedido.entity';

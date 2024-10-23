@@ -9,6 +9,12 @@ export class OperadoresController {
 
     constructor(private operadoresService: OperadoresService) { }
 
+    //GET Tareas
+    @Get('/tareas')
+    getTask() {
+        return this.operadoresService.getTask();
+    }
+
     // GET
     @Get('')
     getAll() {

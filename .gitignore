@@ -1,5 +1,6 @@
 # Variables de entorno
 *.env
+/postgres_data
 
 # compiled output
 /dist

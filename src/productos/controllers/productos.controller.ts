@@ -18,7 +18,7 @@ export class ProductosController {
         return this.productsService.findOne(+idProduct);
     }
 
-    @Get('listar')
+    @Get('')
     @ApiOperation({ summary: 'Catálogo con todos los productos' })
     getProducts(
         @Query('limit') limit = 100,

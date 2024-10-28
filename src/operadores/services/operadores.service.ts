@@ -46,17 +46,12 @@ export class OperadoresService {
         return this.operadores.find(operador => operador.id === id);
     }
 
-    getOrderByUser(id: number): Pedido {
-        const operador = this.findOne(id);
-
-        if (!operador) {
-            throw new NotFoundException(`Operador con id ${id} no encontrado`);
-        }
-
+    async getOrderByUser(id: number) {
+        const user = this.findOne(id);
         return {
             date: new Date(),
-            operador,
-            products: this.productsService.findAll(),
+            user,
+            products: await this.productsService.findAll(),
         }
     }
 

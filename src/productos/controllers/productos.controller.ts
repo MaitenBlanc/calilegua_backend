@@ -14,7 +14,7 @@ export class ProductosController {
     @HttpCode(HttpStatus.ACCEPTED)
     @ApiOperation({ summary: 'Producto: ' })
     getProducto(
-        @Param('idProduct', ParseIntPipe) idProduct: string,) {
+        @Param('idProduct', ParseIntPipe) idProduct: string) {
         return this.productsService.findOne(+idProduct);
     }
 

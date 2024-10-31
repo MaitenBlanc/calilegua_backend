@@ -1,39 +1,39 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CategoriasService } from '../services/categorias.service';
+import { CreateCategoriaDTO, UpdateCategoriaDTO } from '../dtos/categoria.dto';
 
-@ApiTags('Categorías')
+@ApiTags('Categorias')
 @Controller('categorias')
 export class CategoriasController {
+    constructor(private categroyService: CategoriasService) { }
+
     // GET
     @Get(':idCategoria')
-    getCategoria(@Param('idCategoria') idCategoria: string): string {
-        return `El ID de la categoria es: ${idCategoria}`;
+    @HttpCode(HttpStatus.ACCEPTED)
+    @ApiOperation({ summary: 'Categoria: ' })
+    getCategoria(@Param('idCategoria', ParseIntPipe) idCategoria: number) {
+        return this.categroyService.findOne(+idCategoria);
     }
 
     // POST
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    @Post()
+    create(@Body() payload: CreateCategoriaDTO) {
+        return this.categroyService.create(payload);
     }
 
     // PUT
     @Put(':idCategoria')
     updateCategoria(
-        @Param('idCategoria') idCategoria: string,
-        @Body() body: any
-    ): any {
-        return {
-            idCategoria: idCategoria,
-            nombre: body.nombre,
-            imagen: body.imagen
-        }
+        @Param('idCategoria') idCategoria: number,
+        @Body() payload: UpdateCategoriaDTO) {
+        return this.categroyService.update(+idCategoria, payload);
     }
 
     // DELETE
     @Delete(':idCategoria')
-    deleteCategoria(@Param('idCategoria') idCategoria: string): any {
+    deleteCategoria(@Param('idCategoria') idCategoria: number,
+        @Body() body: UpdateCategoriaDTO) {
         return {
             idCategoria: idCategoria,
             delete: true,

@@ -18,7 +18,7 @@ export class CompradoresService {
     }
 
     async findOne(id: number) {
-        const comprador = await this.compradorRepo.findOneBy({ id });
+        const comprador = await this.compradorRepo.findOne({ id });
         if (!comprador) {
             throw new NotFoundException(`El comprador con id: #${id} no existe.`);
         }
@@ -31,7 +31,7 @@ export class CompradoresService {
     }
 
     async update(id: number, payload: UpdateCompradorDTO) {
-        const comprador = await this.compradorRepo.findOneBy({ id });
+        const comprador = await this.compradorRepo.findOne({ id });
         if (!comprador) {
             throw new NotFoundException(`El comprador con id: #${id} no existe.`);
         }

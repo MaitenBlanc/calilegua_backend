@@ -2,7 +2,7 @@ import { ApiProperty, OmitType, PartialType } from "@nestjs/swagger";
 import { IsString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateCategoriaDTO {
-    @ApiProperty({ description: 'Nombre del producto' })
+    @ApiProperty({ description: 'Nombre de la categoría' })
     @IsString()
     @IsNotEmpty()
     readonly nombre: string;

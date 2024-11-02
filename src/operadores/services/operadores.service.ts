@@ -40,7 +40,7 @@ export class OperadoresService {
     }
 
     async findOne(id: number) {
-        const operador = await this.operadorRepo.findOne(id);
+        const operador = await this.operadorRepo.findOneBy({ id });
 
         if (!operador) {
             throw new NotFoundException(`Operador con id ${id} no encontrado`);
@@ -49,7 +49,7 @@ export class OperadoresService {
     }
 
     async getOrderByUser(id: number): Promise<Pedido> {
-        const operador = await this.operadorRepo.findOne(id);
+        const operador = await this.operadorRepo.findOneBy({ id });
         return {
             id,
             date: new Date(),

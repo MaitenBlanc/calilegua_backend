@@ -17,7 +17,7 @@ export class FabricantesService {
     }
 
     async findOne(id: number) {
-        const fabricante = await this.fabricanteRepo.findOne({ id });
+        const fabricante = await this.fabricanteRepo.findOneBy({ id });
 
         if (!fabricante) {
             throw new NotFoundException(`El fabricante con id: #${id} no existe.`);
@@ -31,7 +31,7 @@ export class FabricantesService {
     }
 
     async update(id: number, payload: UpdateFabricanteDTO) {
-        const fabricante = await this.fabricanteRepo.findOne({ id });
+        const fabricante = await this.fabricanteRepo.findOneBy({ id });
         if (!fabricante) {
             throw new NotFoundException(`El fabricante con id: #${id} no existe.`);
         }

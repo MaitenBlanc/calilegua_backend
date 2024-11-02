@@ -14,7 +14,7 @@ export class ProductosController {
     @HttpCode(HttpStatus.ACCEPTED)
     @ApiOperation({ summary: 'Producto: ' })
     getProducto(
-        @Param('idProduct', ParseIntPipe) idProduct: string) {
+        @Param('idProduct', ParseIntPipe) idProduct: number) {
         return this.productsService.findOne(+idProduct);
     }
 
@@ -36,14 +36,14 @@ export class ProductosController {
 
     // PUT
     @Put(':idProduct')
-    updateProducto(@Param('idProduct') idProduct: string,
+    updateProducto(@Param('idProduct', ParseIntPipe) idProduct: number,
         @Body() payload: UpdateProductDTO) {
         return this.productsService.update(+idProduct, payload);
     }
 
     // DELETE
     @Delete(':idProduct')
-    deleteProducto(@Param('idProduct') idProduct: string,
+    deleteProducto(@Param('idProduct') idProduct: number,
         @Body() body: RemoveProductDTO) {
         return {
             idProduct: idProduct,

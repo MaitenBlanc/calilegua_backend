@@ -7,16 +7,13 @@ import { Comprador } from './entities/comprador.entity';
 
 import { OperadoresController } from './controllers/operadores.controller';
 import { OperadoresService } from './services/operadores.service';
+import { Operador } from './entities/operador.entity';
 
-import { PedidosController } from './controllers/pedidos.controller';
-import { PedidosService } from './services/pedidos.service';
-
-import { DetallepedidoController } from './controllers/detallepedido.controller';
 import { ProductosModule } from 'src/productos/productos.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Comprador]), ProductosModule],
-    controllers: [CompradoresController, OperadoresController, PedidosController, DetallepedidoController],
-    providers: [CompradoresService, OperadoresService, PedidosService],
+    imports: [ProductosModule, TypeOrmModule.forFeature([Operador, Comprador])],
+    controllers: [OperadoresController, CompradoresController],
+    providers: [OperadoresService, CompradoresService],
 })
 export class OperadoresModule { }

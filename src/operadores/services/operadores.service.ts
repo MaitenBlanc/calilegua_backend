@@ -1,34 +1,27 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+
+import { ConfigService } from '@nestjs/config';
 import { ProductosService } from 'src/productos/services/productos.service';
+import { CompradoresService } from './compradores.service';
+
 import { Operador } from '../entities/operador.entity';
 import { Pedido } from '../entities/pedido.entity';
-import { ConfigService } from '@nestjs/config';
 import { CreateOperadorDTO, UpdateOperadorDTO } from '../dtos/operadores.dto';
+
 import { Client } from 'pg';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { number } from 'joi';
 
 @Injectable()
 export class OperadoresService {
-    private idCont = 1;
-
-    private readonly operadores: Operador[] = [
-        {
-            "id": 1,
-            "email": "operador1@gmail.com",
-            "password": "123456",
-            "role": "admin"
-        },
-        {
-            "id": 2,
-            "email": "operador2@gmail.com",
-            "password": "34564",
-            "role": "vendedor"
-        }
-    ];
 
     constructor(
         private productsService: ProductosService,
         private configService: ConfigService,
+        private compradoresService: CompradoresService,
         @Inject('PG') private clientPg: Client,
+        @InjectRepository(Operador) private operadorRepo: Repository<Operador>,
     ) { }
 
     getTask() {
@@ -42,55 +35,51 @@ export class OperadoresService {
         });
     }
 
-    findOne(id: number): Operador {
-        return this.operadores.find(operador => operador.id === id);
+    async findAll() {
+        return await this.operadorRepo.find();
     }
 
-    async getOrderByUser(id: number) {
-        const user = this.findOne(id);
-        return {
-            date: new Date(),
-            user,
-            products: await this.productsService.findAll(),
-        }
-    }
-
-    findAll(): Operador[] {
-        const apikey = this.configService.get('APIKEY');
-        const dbname = this.configService.get('DB_NAME');
-        console.log(apikey, dbname);
-        return this.operadores;
-    }
-
-    create(payload: CreateOperadorDTO) {
-        const newOperador = {
-            id: this.operadores.length + 1,
-            ...payload,
-        };
-        this.operadores.push(newOperador);
-        return newOperador;
-    }
-
-    update(id: number, payload: UpdateOperadorDTO): Operador {
-        const operador = this.findOne(id);
+    async findOne(id: number) {
+        const operador = await this.operadorRepo.findOne(id);
 
         if (!operador) {
             throw new NotFoundException(`Operador con id ${id} no encontrado`);
         }
-        const updateOperador = {
-            ...operador,
-            ...payload,
-        }
-        const operadorIndex = this.operadores.findIndex(operador => operador.id === id);
-        this.operadores[operadorIndex] = updateOperador;
-        return updateOperador;
+        return operador;
     }
 
-    delete(id: number): void {
-        const operadorIndex = this.operadores.findIndex(operador => operador.id === id);
-        if (operadorIndex === -1) {
-            throw new NotFoundException(`Operador con id ${id} no encontrado`);
+    async getOrderByUser(id: number): Promise<Pedido> {
+        const operador = await this.operadorRepo.findOne(id);
+        return {
+            id,
+            date: new Date(),
+            operador,
+            products: await this.productsService.findAll(),
         }
-        this.operadores.splice(operadorIndex, 1);
+    }
+
+    async create(payload: CreateOperadorDTO) {
+        const newOperador = this.operadorRepo.create(payload);
+        return await this.operadorRepo.save(newOperador);
+    }
+
+    async update(id: number, payload: UpdateOperadorDTO) {
+        const operador = await this.findOne(id);
+        const updateOperador = this.operadorRepo.merge(operador, payload);
+
+        if (payload.compradorId) {
+            const newComprador = await this.compradoresService.findOne(payload.compradorId);
+            operador.comprador = newComprador;
+        }
+
+        return this.operadorRepo.save(updateOperador);
+    }
+
+    async delete(id: number) {
+        const idDelete = await this.operadorRepo.delete(id);
+
+        if (idDelete.affected === 0) {
+            throw new NotFoundException(`El operador con id: #${id} no existe.`);
+        }
     }
 }

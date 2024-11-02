@@ -14,7 +14,7 @@ import { CategoriasService } from './services/categorias.service';
 import { Categoria } from './entities/categoria.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Producto]), TypeOrmModule.forFeature([Categoria]), TypeOrmModule.forFeature([Fabricante])],
+    imports: [TypeOrmModule.forFeature([Producto, Categoria, Fabricante])],
     controllers: [FabricantesController, ProductosController, CategoriasController],
     providers: [ProductosService, CategoriasService, FabricantesService],
     exports: [ProductosService]

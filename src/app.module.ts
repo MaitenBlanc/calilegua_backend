@@ -15,8 +15,6 @@ import * as Joi from 'joi';
   imports: [
     HttpModule,
     DatabaseModule,
-    OperadoresModule,
-    ProductosModule,
     ConfigModule.forRoot({
       envFilePath: enviroments[process.env.NODE_ENV] || '.env',
       load: [config],
@@ -27,6 +25,8 @@ import * as Joi from 'joi';
         DB_PORT: Joi.number().required(),
       })
     }),
+    OperadoresModule,
+    ProductosModule,
   ],
   controllers: [AppController],
   providers: [AppService,

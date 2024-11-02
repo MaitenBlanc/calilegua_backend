@@ -4,13 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Producto } from 'src/productos/entities/producto.entity';
-import { CreateProductDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
+import {
+    CreateProductDTO,
+    UpdateProductDTO,
+} from 'src/productos/dtos/productos.dto';
 
 @Injectable()
 export class ProductosService {
     constructor(
         @InjectRepository(Producto) private productRepo: Repository<Producto>,
-    ) { };
+    ) { }
 
     async findAll() {
         return await this.productRepo.find();

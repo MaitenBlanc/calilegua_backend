@@ -47,12 +47,7 @@ export class OperadoresController {
 
     // DELETE
     @Delete(':id')
-    deleteOperador(@Param('id', ParseIntPipe) id: number): any {
+    deleteOperador(@Param('id', ParseIntPipe) id: number) {
         this.operadoresService.delete(id);
-        return {
-            id: id,
-            delete: true,
-            count: 1,
-        };
     }
 }

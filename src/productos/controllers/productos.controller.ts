@@ -38,7 +38,7 @@ export class ProductosController {
     @Put(':idProduct')
     updateProducto(@Param('idProduct', ParseIntPipe) idProduct: number,
         @Body() payload: UpdateProductDTO) {
-        return this.productsService.update(+idProduct, payload);
+        return this.productsService.update(idProduct, payload);
     }
 
     // DELETE

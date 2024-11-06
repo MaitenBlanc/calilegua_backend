@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { Client } from 'pg';
-import config from 'src/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import config from 'src/config';
 
 const APIKEY = 'DEV-456';
 const APIKEYPROD = 'PROD-12345';
@@ -15,13 +15,14 @@ const APIKEYPROD = 'PROD-12345';
             useFactory: (configService: ConfigType<typeof config>) => {
                 return <TypeOrmModuleOptions>{
                     type: 'postgres',
-                    database: configService.database.name,
+                    database: configService.postgres.name,
                     username: configService.postgres.user,
                     password: configService.postgres.password,
                     host: configService.postgres.host,
-                    port: +configService.database.port,
+                    port: configService.postgres.port,
                     synchronize: false,
-                    autoLoadEntities: true
+                    autoLoadEntities: true,
+                    logging: true
                 }
             }
         })

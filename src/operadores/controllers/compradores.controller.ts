@@ -20,7 +20,7 @@ export class CompradoresController {
 
     @Get('')
     @ApiOperation({ summary: 'Todos los compradores' })
-    getAll() {
+    getAll(): Promise<Comprador[]> {
         return this.compradoresService.findAll();
     }
 

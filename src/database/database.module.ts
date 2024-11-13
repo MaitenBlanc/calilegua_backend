@@ -15,11 +15,11 @@ const APIKEYPROD = 'PROD-12345';
             useFactory: (configService: ConfigType<typeof config>) => {
                 return <TypeOrmModuleOptions>{
                     type: 'postgres',
-                    database: configService.database.name,
+                    database: configService.postgres.name,
                     username: configService.postgres.user,
                     password: configService.postgres.password,
                     host: configService.postgres.host,
-                    port: +configService.database.port,
+                    port: +configService.postgres.port,
                     synchronize: false,
                     autoLoadEntities: true
                 }

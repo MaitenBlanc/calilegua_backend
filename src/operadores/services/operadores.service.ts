@@ -48,14 +48,8 @@ export class OperadoresService {
         return operador;
     }
 
-    async getOrderByUser(id: number): Promise<Pedido> {
-        const operador = await this.operadorRepo.findOneBy({ id });
-        return {
-            id,
-            date: new Date(),
-            operador,
-            products: await this.productsService.findAll(),
-        }
+    async getOrderByUser(id: number) {
+        return await this.operadorRepo.findOneBy({ id });
     }
 
     async create(payload: CreateOperadorDTO) {

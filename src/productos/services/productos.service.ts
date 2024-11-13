@@ -1,18 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Producto } from 'src/productos/entities/producto.entity';
 import {
     CreateProductDTO,
     UpdateProductDTO,
 } from 'src/productos/dtos/productos.dto';
+import { Fabricante } from '../entities/fabricante.entity';
+import { Categoria } from '../entities/categoria.entity';
 
 @Injectable()
 export class ProductosService {
     constructor(
         @InjectRepository(Producto) private productRepo: Repository<Producto>,
+        @InjectRepository(Fabricante) private fabricanteRepo: Repository<Fabricante>,
+        @InjectRepository(Categoria) private categoriaRepo: Repository<Categoria>,
     ) { }
 
     async findAll() {
@@ -20,7 +24,10 @@ export class ProductosService {
     }
 
     async findOne(id: number) {
-        const product = await this.productRepo.findOneBy({ id });
+        const product = await this.productRepo.findOne({
+            where: { id },
+            relations: ['fabricante', 'categorias'],
+        });
 
         if (!product) {
             throw new NotFoundException(`El producto con id: #${id} no existe.`);
@@ -28,8 +35,24 @@ export class ProductosService {
         return product;
     }
 
-    create(payload: CreateProductDTO) {
+    async create(payload: CreateProductDTO) {
         const newProduct = this.productRepo.create(payload);
+
+        if (payload.fabricanteId) {
+            const fabricante = await this.fabricanteRepo.findOneBy({ id: payload.fabricanteId });
+
+            if (!fabricante) {
+                throw new NotFoundException(`El fabricante con id: #${payload.fabricanteId} no existe.`);
+            }
+
+            newProduct.fabricante = fabricante;
+        }
+
+        if (payload.categoriasIds && payload.categoriasIds.length > 0) {
+            const categorias = await this.categoriaRepo.findBy({ id: In(payload.categoriasIds) });
+            newProduct.categorias = categorias;
+        }
+
         return this.productRepo.save(newProduct);
     }
 
@@ -38,6 +61,12 @@ export class ProductosService {
         if (!product) {
             throw new NotFoundException(`El producto con id: #${id} no existe.`);
         }
+
+        if (payload.fabricanteId) {
+            const fabricante = await this.fabricanteRepo.findOneBy({ id: payload.fabricanteId });
+            product.fabricante = fabricante;
+        }
+
         this.productRepo.merge(product, payload);
         return this.productRepo.save(product);
     }

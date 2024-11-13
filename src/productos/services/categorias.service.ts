@@ -12,8 +12,8 @@ export class CategoriasService {
         @InjectRepository(Categoria) private categoryRepo: Repository<Categoria>,
     ) { }
 
-    async findAll() {
-        return await this.categoryRepo.find();
+    findAll() {
+        return this.categoryRepo.find();
     }
 
     async findOne(id: number) {

@@ -74,4 +74,30 @@ export class ProductosService {
     remove(id: number) {
         return this.productRepo.delete(id);
     }
+
+    async removeCategoryByProduct(productoId: number, categoryId: number) {
+        const producto = await this.productRepo.findOne({
+            where: { id: productoId },
+            relations: ['categorias'],
+        })
+
+        producto.categorias = producto.categorias.filter(
+            (item) => item.id !== categoryId,
+        );
+
+        return this.productRepo.save(producto);
+    }
+
+
+    async addCategoryToProduct(productoId: number, categoryId: number) {
+        const producto = await this.productRepo.findOne({
+            where: { id: productoId },
+            relations: ['categorias'],
+        })
+
+        const category = await this.categoriaRepo.findOneBy({ id: categoryId });
+
+        producto.categorias.push(category);
+        return this.productRepo.save(producto);
+    }
 }

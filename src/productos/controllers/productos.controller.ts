@@ -10,12 +10,12 @@ export class ProductosController {
     constructor(private productsService: ProductosService) { }
 
     // GET
-    @Get(':idProduct')
+    @Get(':id')
     @HttpCode(HttpStatus.ACCEPTED)
     @ApiOperation({ summary: 'Producto: ' })
     getProducto(
-        @Param('idProduct', ParseIntPipe) idProduct: number) {
-        return this.productsService.findOne(+idProduct);
+        @Param('id', ParseIntPipe) id: number) {
+        return this.productsService.findOne(+id);
     }
 
     @Get('')
@@ -35,18 +35,26 @@ export class ProductosController {
     }
 
     // PUT
-    @Put(':idProduct')
-    updateProducto(@Param('idProduct', ParseIntPipe) idProduct: number,
+    @Put(':id')
+    updateProducto(@Param('id', ParseIntPipe) id: number,
         @Body() payload: UpdateProductDTO) {
-        return this.productsService.update(+idProduct, payload);
+        return this.productsService.update(+id, payload);
+    }
+
+    @Put(':id/category/:categoryId')
+    addCategoryToProduct(
+        @Param('id') id: number,
+        @Param('categoryId', ParseIntPipe) categoryId: number,
+    ) {
+        return this.productsService.addCategoryToProduct(id, categoryId);
     }
 
     // DELETE
-    @Delete(':idProduct')
-    deleteProducto(@Param('idProduct') idProduct: number,
+    @Delete(':id')
+    deleteProducto(@Param('id') id: number,
         @Body() body: RemoveProductDTO) {
         return {
-            idProduct: idProduct,
+            id: id,
             delete: true,
             count: 1,
         };

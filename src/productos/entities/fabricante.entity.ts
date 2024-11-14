@@ -6,7 +6,7 @@ export class Fabricante {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 255, unique: true })
     nombre: string;
 
     @Column({ type: 'varchar', length: 255 })

@@ -26,3 +26,10 @@ export class CreateFabricanteDTO {
 export class UpdateFabricanteDTO extends PartialType(
     OmitType(CreateFabricanteDTO, ['nombre']),
 ) { }
+
+export class RemoveFabricanteDTO {
+    @IsNumber()
+    @IsNotEmpty()
+    readonly id: number;
+}
+

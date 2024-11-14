@@ -1,49 +1,51 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FabricantesService } from '../services/fabricantes.service';
+import { CreateFabricanteDTO, RemoveFabricanteDTO, UpdateFabricanteDTO } from '../dtos/fabricante.dto';
 
 @ApiTags('Fabricantes')
 @Controller('fabricantes')
 export class FabricantesController {
+
+    constructor(private fabricanteService: FabricantesService) { }
+
     // GET
     @Get('/:nombre/productos/:productId')
-    getCategory(@Param('productId') productId: string, @Param('nombre') nombre: string) {
-        return `El ID del producto es ${productId} del fabricante ${nombre}`;
+    @HttpCode(HttpStatus.ACCEPTED)
+    @ApiOperation({ summary: 'Producto de un fabricante' })
+    getProductByFabricante(@Param('productId') productId: number) {
+        return this.fabricanteService.findOne(productId);
     }
 
-    @Get('fabricantes')
-    getProducts(
-        @Query('id') id = 1,
-        @Query('nombre') nombre = 'ACME',
-        @Query('origen') origen: string,
+    @Get('')
+    @ApiOperation({ summary: 'Fabricantes' })
+    getFabricantes(
+        @Query('limit') limit = 100,
+        @Query('offset') offset = 0,
+        @Query('brand') brand = '',
     ) {
-        return `El fabricante con ID ${id}, y nombre => ${nombre} es de procedencia ${origen}`;
+        return this.fabricanteService.findAll();
     }
 
     // POST
     @Post()
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    create(@Body() payload: CreateFabricanteDTO) {
+        return this.fabricanteService.create(payload);
     }
 
     // PUT
     @Put(':idFabricante')
     updateFabricante(
-        @Param('idFabricante') idFabricante: string,
-        @Body() body: any,
-    ): any {
-        return {
-            idFabricante: idFabricante,
-            nombre: body.nombre,
-            origen: body.origen,
-        }
+        @Param('idFabricante', ParseIntPipe) idFabricante: number,
+        @Body() payload: UpdateFabricanteDTO) {
+        return this.fabricanteService.update(idFabricante, payload)
     }
 
     // DELETE
     @Delete(':idFabricante')
-    deleteFabricante(@Param('idFabricante') idFabricante: string): any {
+    deleteFabricante(
+        @Param('idFabricante') idFabricante: number,
+        @Body() payload: RemoveFabricanteDTO) {
         return {
             idFabricante: idFabricante,
             delete: true,

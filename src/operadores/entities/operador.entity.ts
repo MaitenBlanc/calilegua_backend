@@ -29,10 +29,8 @@ export class Operador {
 
     @OneToOne(() => Comprador, (comprador) => comprador.operador, {
         nullable: true,
+        eager: true,
     })
     @JoinColumn({ name: 'compradorId' })
     comprador: Comprador;
-
-    @Column({ name: 'compradorId', nullable: true })
-    compradorId: number;
 }

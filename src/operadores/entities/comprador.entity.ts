@@ -29,7 +29,7 @@ export class Comprador {
     updateAt: Date;
 
     @OneToOne(() => Operador, (operador) => operador.comprador, {
-        nullable: true,
+        nullable: true
     })
     operador: Operador;
 

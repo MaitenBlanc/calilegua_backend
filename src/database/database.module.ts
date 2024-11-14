@@ -19,7 +19,7 @@ const APIKEYPROD = 'PROD-12345';
                     username: configService.postgres.user,
                     password: configService.postgres.password,
                     host: configService.postgres.host,
-                    port: configService.postgres.port,
+                    port: +configService.postgres.port,
                     synchronize: false,
                     autoLoadEntities: true,
                     logging: true

@@ -1,27 +1,14 @@
-import { PartialType, OmitType } from "@nestjs/mapped-types";
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator";
+import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsPositive } from "class-validator";
 
 export class CreatePedidoDTO {
-    @ApiProperty({ description: 'Id del pedido' })
+    @ApiProperty({ description: 'Id del comprador' })
     @IsNumber()
     @IsNotEmpty()
     @IsPositive()
-    readonly id: number;
-
-    @ApiProperty({ description: 'Producto pedido' })
-    @IsString()
-    @IsNotEmpty()
-    readonly producto: string;
-
-    @ApiProperty({ description: 'Monto total del pedido' })
-    @IsString()
-    @IsNotEmpty()
-    readonly precio_total: number;
+    readonly compradorId: number;
 }
 
-export class UpdatePedidoDTO extends PartialType(
-    OmitType(CreatePedidoDTO, ['id']),
-) { }
+export class UpdatePedidoDTO extends PartialType(CreatePedidoDTO) { }
 
 

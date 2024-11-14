@@ -1,44 +1,42 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { PedidosService } from '../services/pedidos.service';
+import { CreatePedidoDTO, UpdatePedidoDTO } from '../dtos/pedidos.dto';
 
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
+    constructor(private pedidosService: PedidosService) { }
+
     // GET
-    @Get('/:nombreComprador/:idPedido')
-    getPedido(@Param('idPedido') idPedido: string, @Param('nombreComprador') nombreComprador: string) {
-        return `El ID del pedido es ${idPedido} del comprador ${nombreComprador}`;
+    @Get()
+    findAll() {
+        return this.pedidosService.findAll();
+    }
+
+    @Get(':id')
+    getPedido(@Param('id', ParseIntPipe) id: number) {
+        return this.pedidosService.findOne(id);
     }
 
     // POST
     @Post()
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    create(@Body() payload: CreatePedidoDTO) {
+        return this.pedidosService.create(payload);
     }
 
     // PUT
-    @Put(':idPedido')
-    updatePedido(
-        @Param('idPedido') idPedido: string,
-        @Body() body: any,
-    ): any {
-        return {
-            idPedido: idPedido,
-            comprador: body.idComprador,
-            monto: body.monto,
-        };
+    @Put(':id')
+    update(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() payload: UpdatePedidoDTO
+    ) {
+        return this.pedidosService.update(id, payload);
     }
 
     // DELETE
-    @Delete(':idPedido')
-    deletePedido(@Param('idPedido') idPedido: string): any {
-        return {
-            idPedido: idPedido,
-            delete: true,
-            count: 1,
-        };
+    @Delete(':id')
+    delete(@Param('id', ParseIntPipe) id: number) {
+        return this.pedidosService.remove(+id);
     }
 }

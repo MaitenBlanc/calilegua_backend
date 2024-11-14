@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsUrl, IsPositive, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, IsEmail } from 'class-validator';
 import { OmitType, PartialType, ApiProperty } from '@nestjs/swagger';
 
 export class CreateFabricanteDTO {

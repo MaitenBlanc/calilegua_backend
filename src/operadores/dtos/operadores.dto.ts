@@ -1,5 +1,5 @@
-import { PartialType, OmitType, ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import { PartialType, ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateOperadorDTO {
     @ApiProperty({ description: 'Correo electrónico del operador' })

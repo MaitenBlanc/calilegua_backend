@@ -1,9 +1,27 @@
-import { Producto } from "src/productos/entities/producto.entity";
-import { Operador } from "./operador.entity";
+import { CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Comprador } from "./comprador.entity";
+import { DetallePedido } from "./detallePedido.entity";
 
+@Entity()
 export class Pedido {
+    @PrimaryGeneratedColumn()
     id: number;
-    date: Date;
-    operador: Operador;
-    products: Producto[];
+
+    @CreateDateColumn({
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    createAt: Date;
+
+    @UpdateDateColumn({
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    updateAt: Date;
+
+    @ManyToOne(() => Comprador, (comprador) => comprador.pedidos)
+    comprador: Comprador;
+
+    @OneToMany(() => DetallePedido, (detalle) => detalle.pedido)
+    detalles: DetallePedido[];
 }

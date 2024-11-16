@@ -4,23 +4,44 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { OperadoresModule } from './operadores/operadores.module';
 import { ProductosModule } from './productos/productos.module';
-import { HttpModule, HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
+import { HttpModule } from '@nestjs/axios';
+import { MongoClient } from 'mongodb';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import config from './config';
+
+const uri = 'mongodb://mongo:secreta123@localhost:27017/'
+const client = new MongoClient(uri);
+
+async function run() {
+  await client.connect();
+  const database = client.db('admin');
+  const taskCollection = database.collection('tareas');
+  const tasks = await taskCollection.find().toArray();
+  console.log(tasks);
+}
+run();
 
 @Module({
-  imports: [HttpModule, DatabaseModule, OperadoresModule, ProductosModule],
+  imports: [HttpModule, DatabaseModule, OperadoresModule, ProductosModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+    })
+  ],
   controllers: [AppController],
   providers: [AppService,
     {
-      provide: 'TAREA_ASINC',
-      useFactory: async (http: HttpService) => {
-        const req = http.get('https://jsonplaceholder.typicode.com/posts');
-        const tarea = await lastValueFrom(req);
-        return tarea.data;
-      },
-      inject: [HttpService],
+      provide: 'MONGO',
+      useFactory: async () => {
+        const uri = 'mongodb://mongo:secreta123@localhost:27017/';
+        const client = new MongoClient(uri);
+        await client.connect();
+        const database = client.db('admin');
+        return database;
+      }
     }
   ],
+  exports: ['MONGO'],
 
 })
 export class AppModule { }

@@ -1,18 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Get, Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { Db } from 'mongodb';
+import config from './config';
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('APIKEY') private APIKEY: string,
-    @Inject('TAREA_ASINC') private tarea: any
+    @Inject('MONGO') private database: Db,
+    @Inject(config.KEY) private configService: ConfigType<typeof config>,
   ) { }
 
-  getKey(): string {
-    return this.APIKEY;
-  }
-
-  getUseFactory(): string {
-    console.log(this.tarea);
-    return 'Realizanod una tarea asincrona de ejemplo';
+  getTasks() {
+    const tasksCollection = this.database.collection('tareas');
+    return tasksCollection.find().toArray();
   }
 }

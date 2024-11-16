@@ -22,7 +22,7 @@ services:
     volumes:
       - ./pgadmin_data:/var/lib/pgadmin
 
-  mysqladmin:
+  mysql:
     image: mysql:5
     environment:
       MYSQL_DB: ${MYSQL_DB}

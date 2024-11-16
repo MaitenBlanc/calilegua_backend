@@ -25,6 +25,7 @@ export class Pedido {
     @ManyToOne(() => Comprador, (comprador) => comprador.pedidos)
     comprador: Comprador;
 
+    @Exclude()
     @OneToMany(() => DetallePedido, (detalle) => detalle.pedido)
     detalles: DetallePedido[];
 

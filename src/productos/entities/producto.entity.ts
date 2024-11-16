@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Fabricante } from "./fabricante.entity";
 import { Categoria } from "./categoria.entity";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class Producto {
@@ -26,12 +27,14 @@ export class Producto {
     @Column({ type: 'varchar' })
     imagen: string;
 
+    @Exclude()
     @CreateDateColumn({
         type: 'timestamptz',
         default: () => 'CURRENT_TIMESTAMP',
     })
     createAt: Date;
 
+    @Exclude()
     @UpdateDateColumn({
         type: 'timestamptz',
         default: () => 'CURRENT_TIMESTAMP',

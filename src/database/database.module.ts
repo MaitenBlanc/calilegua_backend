@@ -1,26 +1,33 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { MongoClient } from 'mongodb';
 import config from 'src/config';
-
-const APIKEY = 'DEV-456';
-const APIKEYPROD = 'PROD-12345';
 
 @Global()
 @Module({
     imports: [
-        ConfigModule
+        MongooseModule.forRootAsync({
+            useFactory: (ConfigService: ConfigType<typeof config>) => {
+                // const { connection, user, password, host, port, name } = ConfigService.mongo;
+                const { user, password, name, port, host, connection } = ConfigService.mongo;
+                return {
+                    // uri: `${connection}://${host}:${port}`,
+                    uri: `${connection}://${user}:${password}@${host}:${port}/${name}`,
+                    user,
+                    pass: password,
+                    name,
+                };
+            },
+            inject: [config.KEY],
+        })
     ],
     providers: [
         {
-            provide: 'APIKEY',
-            useValue: process.env.NODE_ENV === 'prod' ? APIKEYPROD : APIKEY,
-        },
-        {
             provide: 'MONGO',
             useFactory: async (configService: ConfigType<typeof config>) => {
-                const { connection, user, password, host, port, name } = configService.mongo;
-                const uri = `${connection}://${user}:${password}@${host}:${port}/`;
+                const { user, password, name, port, host, connection } = configService.mongo;
+                const uri = `${connection}://${user}:${password}@${host}:${port}/${name}`;
                 const client = new MongoClient(uri);
                 await client.connect();
                 const database = client.db(name);
@@ -29,6 +36,6 @@ const APIKEYPROD = 'PROD-12345';
             inject: [config.KEY, ConfigService],
         }
     ],
-    exports: ['APIKEY', 'MONGO'],
+    exports: ['MONGO', MongooseModule],
 })
 export class DatabaseModule { }

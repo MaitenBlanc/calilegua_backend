@@ -4,5 +4,5 @@ import { Operador } from "./operador.entity";
 export class Pedido {
     date: Date;
     operador: Operador;
-    products: Producto[];
+    // products: Producto[];
 }

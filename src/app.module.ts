@@ -8,6 +8,8 @@ import { HttpModule } from '@nestjs/axios';
 import { MongoClient } from 'mongodb';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ProductoSchema } from './productos/entities/producto.entity';
 
 const uri = 'mongodb://mongo:secreta123@localhost:27017/'
 const client = new MongoClient(uri);
@@ -26,7 +28,9 @@ run();
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
-    })
+    }),
+    MongooseModule.forFeature([{ name: 'Producto', schema: ProductoSchema }]),
+    MongooseModule.forRoot(uri)
   ],
   controllers: [AppController],
   providers: [AppService,

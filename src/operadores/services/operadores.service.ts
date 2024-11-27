@@ -7,7 +7,6 @@ import { Pedido } from '../entities/pedido.entity';
 export class OperadoresService {
     constructor(
         private productsService: ProductosService,
-        @Inject('APIKEY') private apiKey: string,
     ) { }
 
     findOne(id: number): Operador {
@@ -24,7 +23,7 @@ export class OperadoresService {
         return {
             date: new Date(),
             operador,
-            products: this.productsService.findAll(),
+            // products: this.productsService.findAll(),
         }
     }
 }

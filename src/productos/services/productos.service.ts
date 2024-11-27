@@ -1,73 +1,68 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
+
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+
 import { Producto } from 'src/productos/entities/producto.entity';
+import { CreateProductDTO, FilterProductsDTO, UpdateProductDTO } from '../dtos/productos.dto';
 
 @Injectable()
 export class ProductosService {
-    private idCont = 1;
-    private productos: Producto[] = [
-        {
-            id: 1,
-            nombre: 'Prod A',
-            descripcion: 'Descripcion producto A',
-            precio: 6500,
-            stock: 1,
-            origen: 'China',
-            imagen: '',
-        },
-        {
-            id: 2,
-            nombre: 'Prod B',
-            descripcion: 'Descripcion producto B',
-            precio: 7500,
-            stock: 1,
-            origen: 'Japon',
-            imagen: '',
-        },
-    ];
 
-    findAll() {
-        return this.productos;
+    constructor(
+        @InjectModel(Producto.name) private productModel: Model<Producto>
+    ) { }
+
+    async findAll(params?: FilterProductsDTO) {
+        const filters: FilterQuery<Producto> = {};
+        if (params) {
+            const { limit, offset, precioMinimo, precioMaximo } = params;
+
+            if (precioMinimo && precioMaximo) {
+                filters.precio = { $gte: precioMinimo, $lte: precioMaximo }
+            }
+            return this.productModel.find(filters).skip(Number(offset)).limit(Number(limit)).exec();
+        }
+        return this.productModel.find().exec();
     }
 
-    findOne(id: number) {
-        const product = this.productos.find((item) => item.id === id);
+    async findOne(id: string) {
+        const product = await this.productModel.findById(id).exec();
 
         if (!product) {
-            throw new NotFoundException(`El producto con id: #${id} no existe`);
+            throw new NotFoundException(`El producto con id #${id} no existe`);
         }
         return product;
     }
 
+    async getOrderByUser(id: string) {
+        const user = this.findOne(id);
+
+        return {
+            date: new Date(),
+            user,
+            products: await this.findAll(),
+        }
+    }
+
     create(payload: CreateProductDTO) {
-        this.idCont = this.idCont + 1;
-        const newProduct = {
-            id: this.idCont,
-            ...payload,
-        };
-        this.productos.push(newProduct);
-        return newProduct;
+        const newProduct = new this.productModel(payload);
+        return newProduct.save();
     }
 
-    update(id: number, payload: UpdateProductDTO) {
-        const product = this.findOne(id);
-        if (product) {
-            const index = this.productos.findIndex((item) => item.id === id);
-            this.productos[index] = {
-                ...product,
-                ...payload,
-            };
-            return this.productos[index];
+    update(id: string, payload: UpdateProductDTO) {
+        const product = this.productModel
+            .findByIdAndUpdate(id, { $set: payload }, { new: true })
+            .exec();
+
+        if (!product) {
+            throw new NotFoundException(`El producto #${id} no se encuentra.`);
         }
-        return null;
+
+        return product;
     }
 
-    remove(id: number) {
-        const index = this.productos.findIndex((item) => item.id === id);
-        if (index === -1) {
-            throw new NotFoundException(`El producto #${id} no se encuentra`);
-        }
-        this.productos.splice(index, 1);
-        return true;
+    remove(id: string) {
+        return this.productModel.findByIdAndDelete(id);
     }
 }

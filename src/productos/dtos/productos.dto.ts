@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsUrl, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsUrl, IsPositive, IsOptional, Min, ValidateIf } from 'class-validator';
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 export class CreateProductDTO {
@@ -40,4 +40,21 @@ export class RemoveProductDTO {
     readonly id: number;
 }
 
+export class FilterProductsDTO {
+    @IsOptional()
+    @IsPositive()
+    limit: number;
+
+    @IsOptional()
+    @Min(0)
+    offset: number;
+
+    @IsOptional()
+    @Min(0)
+    precioMinimo: number;
+
+    @ValidateIf((params) => params.precioMinimo)
+    @IsPositive()
+    precioMaximo: number;
+}
 

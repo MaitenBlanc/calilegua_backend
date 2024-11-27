@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { CreateProductDTO, RemoveProductDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
+import { CreateProductDTO, FilterProductsDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
 import { ProductosService } from 'src/productos/services/productos.service';
 
 @Controller('productos')
@@ -8,20 +10,18 @@ export class ProductosController {
     constructor(private productsService: ProductosService) { }
 
     // GET
-    @Get(':idProduct')
-    @HttpCode(HttpStatus.ACCEPTED)
-    getProducto(
-        @Param('idProduct', ParseIntPipe) idProduct: string,) {
-        return this.productsService.findOne(+idProduct);
+    @Get(':id')
+    getOne(@Param('id') id: string) {
+        return this.productsService.findOne(id);
     }
 
-    @Get('listar')
-    getProducts(
-        @Query('limit') limit = 100,
-        @Query('offset') offset = 0,
-        @Query('brand') brand = '',
-    ) {
-        return this.productsService.findAll();
+    @Get('')
+    @ApiOperation({ summary: 'Registro de productos' })
+    getProducts(@Query() params: FilterProductsDTO) {
+
+        console.log('Parámetros recibidos:', params);
+
+        return this.productsService.findAll(params);
     }
 
     // POST
@@ -31,21 +31,18 @@ export class ProductosController {
     }
 
     // PUT
-    @Put(':idProduct')
-    updateProducto(@Param('idProduct') idProduct: string,
-        @Body() payload: UpdateProductDTO) {
-        return this.productsService.update(+idProduct, payload);
+    @Put(':id')
+    update(
+        @Param('id', MongoIdPipe) id: string,
+        @Body() payload: UpdateProductDTO
+    ) {
+        return this.productsService.update(id, payload);
     }
 
     // DELETE
-    @Delete(':idProduct')
-    deleteProducto(@Param('idProduct') idProduct: string,
-        @Body() body: RemoveProductDTO) {
-        return {
-            idProduct: idProduct,
-            delete: true,
-            count: 1,
-        };
+    @Delete(':id')
+    delete(@Param('id') id: string) {
+        return this.productsService.remove(id);
     }
 
 }

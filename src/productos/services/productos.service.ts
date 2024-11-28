@@ -8,7 +8,6 @@ import { CreateProductDTO, FilterProductsDTO, UpdateProductDTO } from '../dtos/p
 
 @Injectable()
 export class ProductosService {
-
     constructor(
         @InjectModel(Producto.name) private productModel: Model<Producto>
     ) { }
@@ -21,13 +20,13 @@ export class ProductosService {
             if (precioMinimo && precioMaximo) {
                 filters.precio = { $gte: precioMinimo, $lte: precioMaximo }
             }
-            return this.productModel.find(filters).skip(Number(offset)).limit(Number(limit)).exec();
+            return this.productModel.find(filters).populate('fabricante').skip(offset).limit(limit).exec();
         }
-        return this.productModel.find().exec();
+        return this.productModel.find().populate('fabricante').exec();
     }
 
     async findOne(id: string) {
-        const product = await this.productModel.findById(id).exec();
+        const product = await (await this.productModel.findById(id)).populated('fabricante').exec();
 
         if (!product) {
             throw new NotFoundException(`El producto con id #${id} no existe`);

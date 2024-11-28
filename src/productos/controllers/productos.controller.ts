@@ -18,9 +18,6 @@ export class ProductosController {
     @Get('')
     @ApiOperation({ summary: 'Registro de productos' })
     getProducts(@Query() params: FilterProductsDTO) {
-
-        console.log('Parámetros recibidos:', params);
-
         return this.productsService.findAll(params);
     }
 
@@ -44,5 +41,4 @@ export class ProductosController {
     delete(@Param('id') id: string) {
         return this.productsService.remove(id);
     }
-
 }

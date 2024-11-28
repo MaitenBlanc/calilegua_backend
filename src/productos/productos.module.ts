@@ -11,6 +11,8 @@ import { ProductosService } from './services/productos.service';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { Producto, ProductoSchema } from './entities/producto.entity';
+import { Categoria, CategoriaSchema } from './entities/categoria.entity';
+import { Fabricante, FabricanteSchema } from './entities/fabricante.entity';
 
 @Module({
     imports: [
@@ -18,6 +20,14 @@ import { Producto, ProductoSchema } from './entities/producto.entity';
             {
                 name: Producto.name,
                 schema: ProductoSchema,
+            },
+            {
+                name: Fabricante.name,
+                schema: FabricanteSchema,
+            },
+            {
+                name: Categoria.name,
+                schema: CategoriaSchema,
             }
         ])
     ],

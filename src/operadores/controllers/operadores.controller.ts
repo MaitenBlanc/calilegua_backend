@@ -9,7 +9,7 @@ export class OperadoresController {
 
     // GET
     @Get(':id/pedidos')
-    getOrders(@Param('id', ParseIntPipe) id: number) {
+    getOrders(@Param('id', ParseIntPipe) id: string) {
         return this.operadoresService.getOrderByUser(id);
     }
 

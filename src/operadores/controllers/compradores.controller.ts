@@ -1,42 +1,43 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CompradoresService } from '../services/compradores.service';
+import { ApiOperation } from '@nestjs/swagger';
+import { CreateCompradorDTO, UpdateCompradorDTO } from '../dtos/compradores.dto';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 
 @Controller('compradores')
 export class CompradoresController {
+    constructor(private compradoresService: CompradoresService) { }
+
     // GET
-    @Get(':idComprador')
-    getComprador(@Param('idComprador') idComprador: string): string {
-        return `El identificador del comprador es: ${idComprador}`;
+    @Get(':id')
+    getComprador(@Param('id') id: string) {
+        return this.compradoresService.findOne(id);
+    }
+
+    @Get('')
+    @ApiOperation({ summary: 'Registro de compradores' })
+    getCompradores() {
+        return this.compradoresService.findAll();
     }
 
     // POST
     @Post()
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    create(@Body() payload: CreateCompradorDTO) {
+        return this.compradoresService.create(payload);
     }
 
     // PUT
-    @Put(':idComprador')
-    updateComprador(
-        @Param('idComprador') idComprador: string,
-        @Body() body: any,
+    @Put(':id')
+    update(
+        @Param('id', MongoIdPipe) id: string,
+        @Body() payload: UpdateCompradorDTO,
     ) {
-        return {
-            idComprador: idComprador,
-            nombre: body.nombre,
-            email: body.email,
-        };
+        return this.compradoresService.update(id, payload);
     }
 
     // DELETE
-    @Delete(':idComprador')
-    deleteComprador(@Param('idComprador') idComprador: string): any {
-        return {
-            idComprador: idComprador,
-            delete: true,
-            count: 1,
-        };
+    @Delete(':id')
+    delete(@Param('id') id: string) {
+        return this.compradoresService.remove(id);
     }
 }

@@ -1,42 +1,43 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CategoriasService } from '../services/categorias.service';
+import { ApiOperation } from '@nestjs/swagger';
+import { CreateCategoriaDTO, UpdateCategoriaDTO } from '../dtos/categorias.dto';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 
 @Controller('categorias')
 export class CategoriasController {
+    constructor(private categoriasService: CategoriasService) { }
+
     // GET
-    @Get(':idCategoria')
-    getCategoria(@Param('idCategoria') idCategoria: string): string {
-        return `El ID de la categoria es: ${idCategoria}`;
+    @Get(':id')
+    getCategoria(@Param('id') id: string) {
+        return this.categoriasService.findOne(id);
+    }
+
+    @Get('')
+    @ApiOperation({ summary: 'Registro de categorías' })
+    getCompradores() {
+        return this.categoriasService.findAll();
     }
 
     // POST
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    @Post()
+    create(@Body() payload: CreateCategoriaDTO) {
+        return this.categoriasService.create(payload);
     }
 
     // PUT
-    @Put(':idCategoria')
-    updateCategoria(
-        @Param('idCategoria') idCategoria: string,
-        @Body() body: any
-    ): any {
-        return {
-            idCategoria: idCategoria,
-            nombre: body.nombre,
-            imagen: body.imagen
-        }
+    @Put(':id')
+    update(
+        @Param('id', MongoIdPipe) id: string,
+        @Body() payload: UpdateCategoriaDTO
+    ) {
+        return this.categoriasService.update(id, payload);
     }
 
     // DELETE
-    @Delete(':idCategoria')
-    deleteCategoria(@Param('idCategoria') idCategoria: string): any {
-        return {
-            idCategoria: idCategoria,
-            delete: true,
-            count: 1
-        };
+    @Delete(':id')
+    deleteCategoria(@Param('id') id: string) {
+        return this.categoriasService.remove(id);
     }
-
 }

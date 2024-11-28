@@ -1,51 +1,49 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
+import { FabricantesService } from '../services/fabricantes.service';
+import { ApiOperation } from '@nestjs/swagger';
+import { CreateFabricanteDTO, UpdateFabricanteDTO } from '../dtos/fabricantes.dto';
+import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 
 @Controller('fabricantes')
 export class FabricantesController {
+    constructor(private fabricantesService: FabricantesService) { }
+
     // GET
     @Get('/:nombre/productos/:productId')
-    getCategory(@Param('productId') productId: string, @Param('nombre') nombre: string) {
-        return `El ID del producto es ${productId} del fabricante ${nombre}`;
+    @HttpCode(HttpStatus.ACCEPTED)
+    @ApiOperation({ summary: 'Producto de un fabricante' })
+    getProductByFabricante(@Param('productId') productId: string) {
+        return this.fabricantesService.findOne(productId);
     }
 
-    @Get('fabricantes')
-    getProducts(
-        @Query('id') id = 1,
-        @Query('nombre') nombre = 'ACME',
-        @Query('origen') origen: string,
+    @Get('')
+    @ApiOperation({ summary: 'Lista de fabricantes' })
+    getFabricantes(
+        @Query('limit') limit = 100,
+        @Query('offset') offset = 0,
+        @Query('brand') brand = '',
     ) {
-        return `El fabricante con ID ${id}, y nombre => ${nombre} es de procedencia ${origen}`;
+        return this.fabricantesService.findAll();
     }
 
     // POST
     @Post()
-    create(@Body() payload: any) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+    create(@Body() payload: CreateFabricanteDTO) {
+        return this.fabricantesService.create(payload);
     }
 
     // PUT
-    @Put(':idFabricante')
-    updateFabricante(
-        @Param('idFabricante') idFabricante: string,
-        @Body() body: any,
-    ): any {
-        return {
-            idFabricante: idFabricante,
-            nombre: body.nombre,
-            origen: body.origen,
-        }
+    @Put(':id')
+    update(
+        @Param('id', MongoIdPipe) id: string,
+        @Body() payload: UpdateFabricanteDTO,
+    ) {
+        return this.fabricantesService.update(id, payload);
     }
 
     // DELETE
-    @Delete(':idFabricante')
-    deleteFabricante(@Param('idFabricante') idFabricante: string): any {
-        return {
-            idFabricante: idFabricante,
-            delete: true,
-            count: 1,
-        };
+    @Delete(':id')
+    delete(@Param('id') id: string) {
+        return this.fabricantesService.remove(id);
     }
 }

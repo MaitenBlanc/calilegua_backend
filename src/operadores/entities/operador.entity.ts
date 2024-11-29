@@ -12,4 +12,4 @@ export class Operador {
     role: string;
 }
 
-export const Operadorchema = SchemaFactory.createForClass(Operador);
+export const OperadorSchema = SchemaFactory.createForClass(Operador);

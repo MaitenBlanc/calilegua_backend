@@ -13,13 +13,15 @@ export class OperadoresController {
         return this.operadoresService.getOrderByUser(id);
     }
 
+    @Get('')
+    getOperadores(@Param('email') email: string) {
+        return this.operadoresService.findByEmail(email);
+    }
+
     // POST
     @Post()
     create(@Body() payload: CreateOperadorDTO) {
-        return {
-            message: 'Acción de crear',
-            payload,
-        };
+        return this.operadoresService.create(payload);
     }
 
     // PUT

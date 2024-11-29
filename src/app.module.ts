@@ -10,6 +10,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductoSchema } from './productos/entities/producto.entity';
+import { AuthController } from './auth/controllers/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 const uri = 'mongodb://mongo:secreta123@localhost:27017/'
 const client = new MongoClient(uri);
@@ -24,7 +26,7 @@ async function run() {
 run();
 
 @Module({
-  imports: [HttpModule, DatabaseModule, OperadoresModule, ProductosModule,
+  imports: [HttpModule, DatabaseModule, OperadoresModule, ProductosModule, AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
@@ -32,7 +34,7 @@ run();
     MongooseModule.forFeature([{ name: 'Producto', schema: ProductoSchema }]),
     MongooseModule.forRoot(uri)
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [AppService,
     {
       provide: 'MONGO',

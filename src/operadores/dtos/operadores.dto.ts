@@ -1,12 +1,7 @@
-import { PartialType, OmitType } from "@nestjs/mapped-types";
-import { IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateOperadorDTO {
-    @IsNumber()
-    @IsNotEmpty()
-    @IsPositive()
-    readonly id: number;
-
     @IsString()
     @IsNotEmpty()
     readonly email: string;
@@ -20,8 +15,4 @@ export class CreateOperadorDTO {
     readonly role: string;
 }
 
-export class UpdateOperadorDTO extends PartialType(
-    OmitType(CreateOperadorDTO, ['id']),
-) { }
-
-
+export class UpdateOperadorDTO extends PartialType(CreateOperadorDTO) { }

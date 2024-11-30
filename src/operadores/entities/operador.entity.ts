@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
 
 @Schema({ collection: 'operadores' })
-export class Operador {
+export class Operador extends Document {
     @Prop({ required: true })
     email: string;
 

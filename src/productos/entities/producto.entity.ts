@@ -30,8 +30,10 @@ export class Producto extends Document {
     //     }),
     // )
     // categoria: Record<string, DireccionesDTO>;
-    @Prop({ type: [CategoriaSchema] })
-    categoria: Types.Array<Categoria>;
+    // @Prop({ type: [CategoriaSchema] })
+    // categoria: Types.Array<Categoria>;
+    @Prop({ type: [Types.ObjectId], ref: Categoria.name })
+    categoria: Types.Array<Types.ObjectId>;
 
     @Prop({ type: Types.ObjectId, ref: Fabricante.name })
     fabricante: Fabricante | Types.ObjectId;

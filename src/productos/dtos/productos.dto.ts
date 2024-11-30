@@ -53,14 +53,16 @@ export class CreateProductDTO {
 
     @ApiProperty({ type: [CreateFabricanteDTO] })
     @IsNotEmpty()
-    @ValidateNested({ each: true })
+    @IsMongoId()
+    // @ValidateNested({ each: true })
     @Type(() => CreateFabricanteDTO)
     readonly fabricante: CreateFabricanteDTO;
 
     @ApiProperty({ type: [CreateCategoriaDTO] })
     @IsArray()
+    @IsMongoId({ each: true })
     @IsNotEmpty()
-    @ValidateNested({ each: true })
+    // @ValidateNested({ each: true })
     @Type(() => CreateCategoriaDTO)
     readonly categoria: CreateCategoriaDTO[];
 }

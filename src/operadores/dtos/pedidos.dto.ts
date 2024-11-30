@@ -1,8 +1,6 @@
 import { IsNotEmpty, IsArray, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { Producto } from 'src/productos/entities/producto.entity';
-import { Comprador } from '../entities/comprador.entity';
 
 export class CreatePedidoDTO {
     // @ApiProperty({ description: 'Fecha del pedido, asignada automáticamente', required: false })

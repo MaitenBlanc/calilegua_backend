@@ -1,12 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
+
 import { CreateProductDTO, FilterProductsDTO, UpdateProductDTO } from 'src/productos/dtos/productos.dto';
 import { ProductosService } from 'src/productos/services/productos.service';
 
+import { Public } from 'src/auth/decorators/public.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Productos')
 @Controller('productos')
 export class ProductosController {
-
     constructor(private productsService: ProductosService) { }
 
     // GET
@@ -15,6 +21,7 @@ export class ProductosController {
         return this.productsService.findOne(id);
     }
 
+    @Public()
     @Get('')
     @ApiOperation({ summary: 'Registro de productos' })
     getProducts(@Query() params: FilterProductsDTO) {

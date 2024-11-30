@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { OperadoresService } from 'src/operadores/services/operadores.service';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { Operador } from 'src/operadores/entities/operador.entity';
+import { PayloadToken } from '../models/token.model';
+import { Role } from '../models/role.model';
 
 @Injectable()
 export class AuthService {
-    constructor(private operadoresService: OperadoresService) { }
+    constructor(
+        private operadoresService: OperadoresService,
+        private jwtService: JwtService,
+    ) { }
 
     async validateUser(email: string, password: string) {
         const operador = await this.operadoresService.findByEmail(email);
@@ -18,5 +25,13 @@ export class AuthService {
             }
         }
         return null;
+    }
+
+    generateJWT(operador: Operador) {
+        const paylad: PayloadToken = { sub: operador.id, role: operador.role };
+        return {
+            access_token: this.jwtService.sign(paylad),
+            operador,
+        };
     }
 }

@@ -44,9 +44,15 @@ export class ProductosService {
         }
     }
 
-    create(payload: CreateProductDTO) {
+    async create(payload: CreateProductDTO) {
         const newProduct = new this.productModel(payload);
-        return newProduct.save();
+        const savedProduct = await newProduct.save();
+
+        return this.productModel
+            .findById(savedProduct._id)
+            .populate('fabricante', 'nombre direccion email')   // Trae solo los datos que le pido (nombre, direccion, email)
+            .populate('categoria', 'nombre imagen')
+            .exec();
     }
 
     update(id: string, payload: UpdateProductDTO) {

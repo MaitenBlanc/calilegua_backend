@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { getModelToken } from '@nestjs/mongoose'; // Si usas Mongoose para MongoDB
+import { getModelToken } from '@nestjs/mongoose';
 import { registerAs } from '@nestjs/config';
 import config from './config';
 

@@ -51,9 +51,9 @@ export class CreateProductDTO {
     @IsNotEmpty()
     readonly imagen: string;
 
-    @ApiProperty({ type: [CreateFabricanteDTO] })
+    @ApiProperty({ type: CreateFabricanteDTO })
     @IsNotEmpty()
-    @IsMongoId()
+    @IsMongoId({ each: true })
     // @ValidateNested({ each: true })
     @Type(() => CreateFabricanteDTO)
     readonly fabricante: CreateFabricanteDTO;

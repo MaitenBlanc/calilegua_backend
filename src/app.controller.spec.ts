@@ -1,22 +1,61 @@
+// import { Test, TestingModule } from '@nestjs/testing';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
+
+// describe('AppController', () => {
+//   let appController: AppController;
+
+//   beforeEach(async () => {
+//     const module: TestingModule = await Test.createTestingModule({
+//       controllers: [AppController],
+//       providers: [AppService],
+//     }).compile();
+
+//     appController = module.get<AppController>(AppController);
+//   });
+
+//   it('should be defined', () => {
+//     expect(appController).toBeDefined();
+//   });
+// });
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { getModelToken } from '@nestjs/mongoose'; // Si usas Mongoose para MongoDB
+import { registerAs } from '@nestjs/config';
+import config from './config';
 
 describe('AppController', () => {
   let appController: AppController;
 
+  // Mock de los proveedores
+  const mockAppService = {
+    getTasks: jest.fn(() => ['Task 1', 'Task 2']),
+  };
+
+  const mockConfig = {
+    apiKey: 'test-api-key',
+  };
+
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [
+        { provide: AppService, useValue: mockAppService },
+        { provide: getModelToken('MONGO'), useValue: {} },
+        { provide: 'CONFIGURATION(config)', useValue: mockConfig },
+      ],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    appController = module.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+  it('should be defined', () => {
+    expect(appController).toBeDefined();
+  });
+
+  it('should return "Tasks"', () => {
+    expect(appController.getTasks()).toEqual(['Task 1', 'Task 2']);
   });
 });

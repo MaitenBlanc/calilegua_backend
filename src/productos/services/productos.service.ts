@@ -20,13 +20,27 @@ export class ProductosService {
             if (precioMinimo && precioMaximo) {
                 filters.precio = { $gte: precioMinimo, $lte: precioMaximo }
             }
-            return this.productModel.find(filters).populate('fabricante').skip(offset).limit(limit).exec();
+            return this.productModel
+                .find(filters)
+                .populate('fabricante', 'nombre direccion email')
+                .populate('categoria', 'nombre imagen')
+                .skip(offset)
+                .limit(limit)
+                .exec();
         }
-        return this.productModel.find().populate('fabricante').exec();
+        return this.productModel
+            .find()
+            .populate('fabricante', 'nombre direccion email')
+            .populate('categoria', 'nombre imagen')
+            .exec();
     }
 
     async findOne(id: string) {
-        const product = await (await this.productModel.findById(id)).populated('fabricante').exec();
+        const product = await this.productModel
+            .findById(id)
+            .populate('fabricante', 'nombre direccion email')
+            .populate('categoria', 'nombre imagen')
+            .exec();
 
         if (!product) {
             throw new NotFoundException(`El producto con id #${id} no existe`);
